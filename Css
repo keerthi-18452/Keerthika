@@ -1,0 +1,171 @@
+// Navigation toggle
+const hamburger = document.querySelector(".hamburger");
+const navMenu = document.querySelector(".nav-menu");
+
+hamburger.addEventListener("click", () => {
+    hamburger.classList.toggle("active");
+    navMenu.classList.toggle("active");
+});
+
+document.querySelectorAll(".nav-link").forEach(n => n.addEventListener("click", () => {
+    hamburger.classList.remove("active");
+    navMenu.classList.remove("active");
+}));
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+        }
+    });
+}, {
+    threshold: 0.1
+});
+
+const hiddenElements = document.querySelectorAll('.hidden');
+hiddenElements.forEach((el) => observer.observe(el));
+
+// Add hidden class to elements that should animate on scroll
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('section:not(.hero)');
+    const skills = document.querySelectorAll('.skill');
+    const projects = document.querySelectorAll('.project-card');
+    const facts = document.querySelectorAll('.fact');
+    
+    sections.forEach(section => {
+        section.classList.add('hidden');
+    });
+    
+    skills.forEach(skill => {
+        skill.classList.add('hidden');
+    });
+    
+    projects.forEach(project => {
+        project.classList.add('hidden');
+    });
+    
+    facts.forEach(fact => {
+        fact.classList.add('hidden');
+    });
+});
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+            window.scrollTo({
+                top: targetElement.offsetTop - 80,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.style.padding = '1rem 0';
+        navbar.style.background = 'rgba(26, 32, 44, 0.95)';
+    } else {
+        navbar.style.padding = '1.5rem 0';
+        navbar.style.background = 'rgba(26, 32, 44, 0.8)';
+    }
+});
+
+// Form submission
+const contactForm = document.querySelector('.contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // In a real application, you would send the form data to a server here
+        alert('Thank you for your message! In a real application, this would be sent to a server.');
+        contactForm.reset();
+    });
+}
+
+// CTA button click
+const ctaButton = document.querySelector('.cta-button');
+if (ctaButton) {
+    ctaButton.addEventListener('click', () => {
+        const projectsSection = document.querySelector('#projects');
+        if (projectsSection) {
+            window.scrollTo({
+                top: projectsSection.offsetTop - 80,
+                behavior: 'smooth'
+            });
+        }
+    });
+}
+
+// Animate facts counting
+const animateCounter = (element, target, duration) => {
+    let start = 0;
+    const increment = target / (duration / 16); // 16ms per frame for 60fps
+    const timer = setInterval(() => {
+        start += increment;
+        if (start >= target) {
+            element.textContent = target + '+';
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(start) + '+';
+        }
+    }, 16);
+};
+
+// Observe facts section to start counter when visible
+const factsSection = document.querySelector('.facts');
+if (factsSection) {
+    const factObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const factNumbers = document.querySelectorAll('.fact-number');
+                factNumbers.forEach(number => {
+                    const target = parseInt(number.textContent);
+                    animateCounter(number, target, 2000);
+                });
+                factObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    factObserver.observe(factsSection);
+}
+
+// Add parallax effect to moon
+window.addEventListener('scroll', () => {
+    const moon = document.querySelector('.moon');
+    if (moon) {
+        const scrollY = window.scrollY;
+        moon.style.transform = `translateY(${scrollY * 0.2}px) rotate(${scrollY * 0.05}deg)`;
+    }
+});
+
+// Add interactive particles
+document.addEventListener('mousemove', (e) => {
+    const particles = document.querySelectorAll('.particle');
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    
+    particles.forEach(particle => {
+        const particleX = parseInt(particle.style.left) || 0;
+        const particleY = parseInt(particle.style.top) || 0;
+        
+        const deltaX = mouseX - particleX;
+        const deltaY = mouseY - particleY;
+        
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        if (distance < 100) {
+            particle.style.transform = `translate(${-deltaX * 0.05}px, ${-deltaY * 0.05}px)`;
+        }
+    });
+});
